@@ -88,4 +88,9 @@ public interface WeatherDataRepository extends JpaRepository<WeatherData, Long> 
      */
     List<WeatherData> findByHumidityGreaterThanEqualOrderByHumidityDesc(Integer humidity);
     
+    /**
+     * 특정 시간 이후의 날씨 데이터 조회
+     */
+    List<WeatherData> findByCollectedAtAfterOrderByCollectedAtDesc(LocalDateTime dateTime);
+    
 }
