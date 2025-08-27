@@ -3,6 +3,13 @@
 ## 📋 프로젝트 개요
 
 Spring Boot 3.5.5와 Spring Batch를 활용한 **CSV 파일 처리 및 실시간 날씨 데이터 수집** 배치 시스템입니다.
+<img width="1356" height="937" alt="스크린샷 2025-08-27 234348" src="https://github.com/user-attachments/assets/727967ac-77da-46c6-8635-c81df53591d3" />
+<img width="650" height="790" alt="스크린샷 2025-08-27 225313" src="https://github.com/user-attachments/assets/41a48c82-3d0c-498e-9090-0096382546d9" />
+<img width="1868" height="347" alt="스크린샷 2025-08-27 225241" src="https://github.com/user-attachments/assets/883d2b9f-1c87-4065-be7e-edf3e66a236f" />
+<img width="667" height="175" alt="스크린샷 2025-08-27 225236" src="https://github.com/user-attachments/assets/cf6c57e0-6426-48c9-81d1-c370dd3a4c9c" />
+<img width="1437" height="926" alt="스크린샷 2025-08-27 225231" src="https://github.com/user-attachments/assets/f7edd7cf-8410-4fe4-a3e6-0d349125645b" />
+<img width="1414" height="810" alt="스크린샷 2025-08-27 234402" src="https://github.com/user-attachments/assets/ec8c0123-52bd-490c-916d-0b6b2a0d0f26" />
+<img width="1338" height="763" alt="스크린샷 2025-08-27 234352" src="https://github.com/user-attachments/assets/63910937-6934-4b00-97e1-d5ab62e86f9c" />
 
 ### 주요 기능
 
