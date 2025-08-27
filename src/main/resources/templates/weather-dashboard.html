@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌦️ 날씨 데이터 대시보드</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .btn-primary { background: #0984e3; color: white; }
+        .btn-success { background: #00b894; color: white; }
+        .btn-warning { background: #fdcb6e; color: #2d3436; }
+        .btn-danger { background: #e17055; color: white; }
+        .btn-info { background: #74b9ff; color: white; }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left: 4px solid #0984e3;
+        }
+        
+        .stat-card h3 {
+            font-size: 0.9em;
+            color: #636e72;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 5px;
+        }
+        
+        .weather-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .weather-sections {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .section h2 {
+            color: #2d3436;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #74b9ff;
+            font-size: 1.3em;
+        }
+        
+        .weather-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .weather-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+        
+        .weather-item.abnormal {
+            background: linear-gradient(135deg, #ffe6e6 0%, #ffcccc 100%);
+            border-left: 4px solid #e17055;
+        }
+        
+        .city-name {
+            font-weight: bold;
+            color: #2d3436;
+            font-size: 1.1em;
+        }
+        
+        .temperature {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #0984e3;
+        }
+        
+        .weather-desc {
+            font-size: 0.9em;
+            color: #636e72;
+            margin-top: 2px;
+        }
+        
+        .temp-change {
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .temp-change.positive { color: #e17055; }
+        .temp-change.negative { color: #74b9ff; }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #636e72;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #636e72;
+        }
+        
+        .timestamp {
+            font-size: 0.8em;
+            color: #b2bec3;
+            margin-top: 5px;
+        }
+        
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #0984e3;
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌦️ 실시간 날씨 대시보드</h1>
+            <p>전국 주요 도시의 날씨 정보를 실시간으로 수집하고 분석합니다</p>
+        </div>
+        
+        <div class="controls">
+            <button onclick="collectWeatherData()" class="btn btn-primary">🌍 날씨 데이터 수집</button>
+            <a href="/weather/current" class="btn btn-success">📊 현재 날씨 데이터</a>
+            <a href="/weather/data" class="btn btn-info">📋 전체 데이터</a>
+            <a href="/weather/abnormal" class="btn btn-warning">⚠️ 이상 기후</a>
+            <a href="/weather/statistics" class="btn btn-danger">📈 통계</a>
+            <a href="/" class="btn" style="background: #636e72; color: white;">🏠 메인으로</a>
+        </div>
+        
+        <div class="content">
+            <!-- 통계 카드 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>전체 수집 데이터</h3>
+                    <div class="value" th:text="${totalRecords}">0</div>
+                    <div class="timestamp">누적 데이터</div>
+                </div>
+                <div class="stat-card">
+                    <h3>모니터링 도시</h3>
+                    <div class="value" th:text="${supportedCities.size()}">0</div>
+                    <div class="timestamp">전국 주요 도시</div>
+                </div>
+                <div class="stat-card">
+                    <h3>이상 기후 감지</h3>
+                    <div class="value" th:text="${abnormalWeather.size()}">0</div>
+                    <div class="timestamp">온도 급변 지역</div>
+                </div>
+                <div class="stat-card">
+                    <h3>API 상태</h3>
+                    <div class="value" style="color: #00b894;">✓</div>
+                    <div class="timestamp">정상 연결</div>
+                </div>
+            </div>
+            
+            <div class="weather-sections">
+                <!-- 현재 날씨 -->
+                <div class="section">
+                    <h2>🌤️ 도시별 현재 날씨</h2>
+                    <div th:if="${currentWeather.empty}" class="empty-state">
+                        <p>수집된 날씨 데이터가 없습니다.</p>
+                        <p>위의 "날씨 데이터 수집" 버튼을 클릭하여 데이터를 수집해보세요.</p>
+                    </div>
+                    <div th:each="weather : ${currentWeather}" class="weather-item">
+                        <div>
+                            <div class="city-name" th:text="${weather.cityName}">도시명</div>
+                            <div class="weather-desc" th:text="${weather.weatherDescription}">날씨 설명</div>
+                            <div class="timestamp" th:text="${#temporals.format(weather.collectedAt, 'MM-dd HH:mm')}">수집시간</div>
+                        </div>
+                        <div>
+                            <div class="temperature" th:text="${weather.temperature} + '°C'">온도</div>
+                            <div th:if="${weather.temperatureChange != null}" 
+                                 th:class="${weather.temperatureChange > 0} ? 'temp-change positive' : 'temp-change negative'"
+                                 th:text="(${weather.temperatureChange > 0 ? '+' : ''} + ${weather.temperatureChange} + '°C')">변화량</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 온도 순위 -->
+                <div class="section">
+                    <h2>🌡️ 온도 순위 (높은 순)</h2>
+                    <div th:if="${sortedByTemp.empty}" class="empty-state">
+                        <p>온도 데이터가 없습니다.</p>
+                    </div>
+                    <div th:each="weather, iterStat : ${sortedByTemp}" class="weather-item">
+                        <div>
+                            <div class="city-name">
+                                <span th:text="${iterStat.count}">1</span>. 
+                                <span th:text="${weather.cityName}">도시명</span>
+                            </div>
+                            <div class="weather-desc">
+                                습도: <span th:text="${weather.humidity}">0</span>% | 
+                                체감: <span th:text="${weather.feelsLike}">0</span>°C
+                            </div>
+                        </div>
+                        <div class="temperature" th:text="${weather.temperature} + '°C'">온도</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 이상 기후 알림 -->
+            <div th:if="${!abnormalWeather.empty}" class="section">
+                <h2>⚠️ 이상 기후 감지</h2>
+                <div th:each="weather : ${abnormalWeather}" class="weather-item abnormal">
+                    <div>
+                        <div class="city-name" th:text="${weather.cityName}">도시명</div>
+                        <div class="weather-desc">전날 대비 급격한 온도 변화 감지</div>
+                        <div class="timestamp" th:text="${#temporals.format(weather.collectedAt, 'MM-dd HH:mm')}">감지시간</div>
+                    </div>
+                    <div>
+                        <div class="temperature" th:text="${weather.temperature} + '°C'">현재온도</div>
+                        <div class="temp-change" th:class="${weather.temperatureChange > 0} ? 'positive' : 'negative'"
+                             th:text="(${weather.temperatureChange > 0 ? '+' : ''} + ${weather.temperatureChange} + '°C')">변화량</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="refresh-btn" onclick="location.reload()" title="새로고침">🔄</button>
+    
+    <script>
+        function collectWeatherData() {
+            const button = event.target;
+            button.disabled = true;
+            button.innerHTML = '⏳ 수집 중...';
+            
+            fetch('/weather/collect', { method: 'POST' })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    // 성공하면 3초 후 페이지 새로고침
+                    if (data.includes('시작되었습니다')) {
+                        setTimeout(() => {
+                            location.reload();
+                        }, 3000);
+                    }
+                    button.disabled = false;
+                    button.innerHTML = '🌍 날씨 데이터 수집';
+                })
+                .catch(error => {
+                    alert('오류 발생: ' + error);
+                    button.disabled = false;
+                    button.innerHTML = '🌍 날씨 데이터 수집';
+                });
+        }
+        
+        // 5분마다 자동 새로고침 (선택사항)
+        // setInterval(() => location.reload(), 300000);
+    </script>
+</body>
+</html>

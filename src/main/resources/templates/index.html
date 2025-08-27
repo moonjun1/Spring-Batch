@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Batch 애플리케이션</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .menu-section {
+            margin: 30px 0;
+        }
+        .menu-button {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 8px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        
+        .menu-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+            margin: 20px 0;
+        }
+        
+        .csv-preview {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+        
+        pre {
+            background: #343a40;
+            color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #007bff, #28a745);
+            margin: 40px 0;
+        }
+        
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        li {
+            margin: 10px 0;
+            padding: 8px 0;
+        }
+        
+        code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Spring Batch 애플리케이션</h1>
+            <p>CSV 파일을 읽어서 데이터베이스에 저장하는 배치 처리 시스템</p>
+        </div>
+
+        <div class="menu-section">
+            <h2>📋 사용 방법</h2>
+            <ol>
+                <li><strong>배치 실행</strong>: CSV 파일의 사용자 데이터를 데이터베이스에 저장합니다.</li>
+                <li><strong>데이터 확인</strong>: 저장된 데이터를 JSON 형태로 확인할 수 있습니다.</li>
+                <li><strong>H2 콘솔</strong>: SQL을 직접 실행하여 데이터를 조회할 수 있습니다.</li>
+            </ol>
+        </div>
+
+        <div class="menu-section">
+            <h2>🎯 메뉴</h2>
+            <button onclick="runBatch(this)" class="menu-button btn-primary">📤 CSV 배치 실행</button>
+            <a href="/persons" class="menu-button btn-success">📊 저장된 사용자 데이터</a>
+            <a href="/weather/dashboard" class="menu-button" style="background: #74b9ff; color: white;">🌦️ 날씨 대시보드</a>
+            <a href="/h2-console" target="_blank" class="menu-button btn-warning">🗄️ H2 데이터베이스 콘솔</a>
+        </div>
+
+        <hr>
+
+        <div class="info-box">
+            <h3>🔧 H2 콘솔 접속 정보</h3>
+            <ul>
+                <li><strong>JDBC URL:</strong> <code>jdbc:h2:mem:testdb</code></li>
+                <li><strong>사용자명:</strong> <code>sa</code></li>
+                <li><strong>비밀번호:</strong> <em>(비워두세요)</em></li>
+            </ul>
+        </div>
+
+        <div class="csv-preview">
+            <h3>📁 처리되는 CSV 파일 내용</h3>
+            <pre>firstName,lastName,email
+김,철수,kim.chulsoo@example.com
+이,영희,lee.younghee@example.com
+박,민수,park.minsoo@example.com
+최,수지,choi.suji@example.com
+정,재호,jung.jaeho@example.com</pre>
+        </div>
+    </div>
+
+    <script>
+        function runBatch(button) {
+            if(confirm('배치 작업을 실행하시겠습니까?')) {
+                button.disabled = true;
+                button.innerHTML = '⏳ 실행 중...';
+                
+                fetch('/run-batch', { method: 'POST' })
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    button.disabled = false;
+                    button.innerHTML = '📤 배치 실행';
+                })
+                .catch(error => {
+                    alert('오류 발생: ' + error);
+                    button.disabled = false;
+                    button.innerHTML = '📤 배치 실행';
+                });
+            }
+        }
+    </script>
+</body>
+</html>
