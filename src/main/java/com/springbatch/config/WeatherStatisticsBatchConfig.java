@@ -99,8 +99,8 @@ public class WeatherStatisticsBatchConfig {
             try {
                 log.info("Generating daily statistics for city: {}", cityCode);
                 
-                // 어제 날짜 기준 (통계는 전날 데이터 기준)
-                LocalDate targetDate = LocalDate.now().minusDays(1);
+                // 어제 날짜 기준 (통계는 전날 데이터 기준) - 테스트를 위해 오늘 포함
+                LocalDate targetDate = LocalDate.now();
                 LocalDateTime startOfDay = targetDate.atStartOfDay();
                 LocalDateTime endOfDay = targetDate.atTime(23, 59, 59);
                 

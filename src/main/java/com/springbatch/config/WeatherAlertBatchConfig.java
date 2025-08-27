@@ -87,8 +87,8 @@ public class WeatherAlertBatchConfig {
             @Override
             public WeatherData read() {
                 if (weatherDataList == null) {
-                    // 최근 2시간 내 데이터 조회
-                    LocalDateTime twoHoursAgo = LocalDateTime.now().minusHours(2);
+                    // 최근 24시간 내 데이터 조회 (테스트를 위해 확장)
+                    LocalDateTime twoHoursAgo = LocalDateTime.now().minusHours(24);
                     weatherDataList = weatherDataRepository
                             .findByCollectedAtAfterOrderByCollectedAtDesc(twoHoursAgo);
                     log.info("Loaded {} recent weather data records for alert processing", weatherDataList.size());
